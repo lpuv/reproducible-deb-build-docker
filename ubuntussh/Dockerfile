@@ -2,7 +2,9 @@ FROM ubuntu:20.04
 
 RUN apt update && apt install  openssh-server sudo -y
 
-RUN  echo 'root:builder' | chpasswd
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 builder
+
+RUN  echo 'builder:builder' | chpasswd
 
 RUN service ssh start
 
