@@ -2,16 +2,7 @@
   tasks:
   - name: "Installing package httpd"
     package:
-        name: "httpd"
+        name: "apache2"
         state: present
+    become: yes
 
-  - name: "Creating webpage"
-    copy:
-        dest: "/var/www/html/index.html"
-        content: "Keep Hustling!!"
-
-  - name: "Starting services"
-    service:
-      name: " httpd"
-      state: started
-      enabled: yes
