@@ -42,4 +42,4 @@
       path: inventory
       block: |
               [docker]
-              {{ result.container.NetworkSettings.IPAddress }} ansible_user=root ansible_password=builder ansible_connection=ssh
+              {{ result.container.NetworkSettings.IPAddress }} ansible_user=builder ansible_password=builder ansible_connection=ssh
