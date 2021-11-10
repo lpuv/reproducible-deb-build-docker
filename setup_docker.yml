@@ -30,8 +30,3 @@
     gpg_key:
       content: "{{ gpg_key }}"
 
-#  - name: "Import GPG Key"
-#    command: "echo -e {{ gpg_key | quote }} | gpg --pinentry-mode=loopback --passphrase {{ gpg_pass | quote }} --import"
-#    register: gpg_debug
-
-#  - debug: var=gpg_debug.stdout_lines
