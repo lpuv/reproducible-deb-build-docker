@@ -20,10 +20,18 @@
       - pbuilder
       - ubuntu-dev-tools
       - apt-file
+      - python3
+      - python3-pip
 
+  - name: "Install packaging module"
+    command: "pip3 install packaging"
 
-  - name: "Import GPG Key"
-    command: "echo -e {{ gpg_key | quote }} | gpg --pinentry-mode=loopback --passphrase {{ gpg_pass | quote }} --import"
-    register: gpg_debug
+  - name: "Import GPG key"
+    gpg_key:
+      content: "{{ gpg_key }}"
 
-  - debug: var=gpg_debug.stdout_lines
+#  - name: "Import GPG Key"
+#    command: "echo -e {{ gpg_key | quote }} | gpg --pinentry-mode=loopback --passphrase {{ gpg_pass | quote }} --import"
+#    register: gpg_debug
+
+#  - debug: var=gpg_debug.stdout_lines
