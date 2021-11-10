@@ -2,7 +2,7 @@
   vars_prompt:
     - name: gpg_pass
       prompt: "GPG Key passphrase?"
-      private: no
+      private: yes
 
   vars:
     - gpg_key: "{{ lookup('file', './kavplex.gpg') }}"
@@ -10,6 +10,12 @@
   become_user: root
   become_method: sudo
   tasks:
+
+  - name: "Add makedeb PPA"
+    apt_repository:
+      repo: ppa:sardine123/makedeb
+      state: present
+
   - name: "Installing packages"
     package:
         name: "{{ item }}"
@@ -22,7 +28,10 @@
       - apt-file
       - python3
       - python3-pip
-
+      - debhelper
+      - asciidoctor
+      - makedeb-makepkg
+      - jq
   - name: "Install packaging module"
     command: "pip3 install packaging"
 

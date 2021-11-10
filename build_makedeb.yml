@@ -1,0 +1,52 @@
+- hosts: docker
+  vars_prompt:
+    - name: gpg_pass
+      prompt: "GPG Key passphrase?"
+      private: yes
+    - name: version
+      prompt: "Version of makedeb? (include -alpha, -beta, etc)"
+      private: no
+    - name: deb_version
+      prompt: "Debian-compatible version of makedeb?"
+      private: no
+
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: "Clone makedeb"
+      git:
+       repo: https://github.com/makedeb/makedeb
+       dest: /home/ubuntu/makedeb
+       clone: yes
+       update: yes
+    - name: "Download source tarball"
+      get_url:
+        url: "https://github.com/makedeb/makedeb/archive/refs/tags/{{ version }}.tar.gz"
+        dest: /home/ubuntu/makedeb_{{ deb_version }}.orig.tar.gz
+
+#    - name: "Add makedeb repository key"
+#      ansible.builtin.apt_key:
+#        url: https://proget.hunterwittenborn.com/debian-feeds/makedeb.pub
+#        state: present
+#        keyring: /etc/apt/trusted.gpg.d/makedeb.gpg     
+#
+#    - name: "Add makedeb repository (to install makedeb-makepkg)"
+#      apt_repository:
+#        repo: "deb [signed-by=/etc/apt/trusted.gpg.d/makedeb.gpg arch=all] https://proget.hunterwittenborn.com/ makedeb main"
+#        state: present
+ 
+    - name: "Build makedeb"
+      command: "debuild -us -uc"
+      args:
+        chdir: "/home/ubuntu/makedeb"
+
+    - name: "Reset git changes"
+      command: "git checkout ."
+      args:
+        chdir: "/home/ubuntu/makedeb"
+
+    - name: "Build makedeb source (to upload)"
+      command: "debuild -S -sa -kleo@craftcat.dev"
+      args:
+        chdir: "/home/ubuntu/makedeb"
