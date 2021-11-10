@@ -39,7 +39,7 @@
 
   - name: Update Container IP in inventory
     blockinfile:
-      path: inventory
+      path: inventories/hosts
       block: |
               [docker]
               {{ result.container.NetworkSettings.IPAddress }} ansible_user=builder ansible_password=builder ansible_connection=ssh
