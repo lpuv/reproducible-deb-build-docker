@@ -1,8 +1,29 @@
 - hosts: docker
-  tasks:
-  - name: "Installing package httpd"
-    package:
-        name: "apache2"
-        state: present
-    become: yes
+  vars_prompt:
+    - name: gpg_pass
+      prompt: "GPG Key passphrase?"
+      private: no
 
+  vars:
+    - gpg_key: "{{ lookup('file', './kavplex.gpg') }}"
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+  - name: "Installing packages"
+    package:
+        name: "{{ item }}"
+        state: present
+    loop:
+      - git
+      - gnupg
+      - pbuilder
+      - ubuntu-dev-tools
+      - apt-file
+
+
+  - name: "Import GPG Key"
+    command: "echo -e {{ gpg_key | quote }} | gpg --pinentry-mode=loopback --passphrase {{ gpg_pass | quote }} --import"
+    register: gpg_debug
+
+  - debug: var=gpg_debug.stdout_lines
